@@ -1,0 +1,9 @@
+# Enable Rewrite Engine
+RewriteEngine On
+
+# Redirect requests for index.html to the root directory
+RewriteCond %{THE_REQUEST} /index\.html [NC]
+RewriteRule ^(.*)index\.html$ /$1 [R=301,L]
+
+# Ensure index.html is still served when the root is requested
+DirectoryIndex index.html

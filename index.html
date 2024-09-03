@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="css/jquery.dataTables.min.css"
+    />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="css/dataTables.bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="css/buttons.dataTables.min.css"
+    />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <!-- Google API -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <!-- easyData -->
+    <script type="text/javascript" src="js/easyData-google-sheets.js"></script>
+    <title>Beautiful Tables</title>
+  </head>
+
+  <body class="container" style="background-color: #fde2d3">
+    <div class="d-flex justify-content-around mb-5 mt-5">
+      <div class="mirchilogo">
+        <img
+          src="img/mirchifresher.png"
+          width="1080"
+          height="279"
+          alt=""
+          srcset=""
+          style="width: 25vw; height: 16vh"
+        />
+      </div>
+      <h1 class="text-center mb-5">Mirchi Boomerang User Data</h1>
+      <div class="milogo">
+        <img
+          src="img/redmilogo.png"
+          width="1080"
+          height="279"
+          alt=""
+          srcset=""
+          style="width: 21vw; height: 13vh"
+        />
+      </div>
+    </div>
+    <div class="mb-5">
+      <table
+        id="maintable"
+        class="display compact cell-border"
+        cellspacing="0"
+        width="100%"
+      ></table>
+    </div>
+    <script type="text/javascript" src="js/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="js/jszip.min.js"></script>
+    <script type="text/javascript" src="js/pdfmake.min.js"></script>
+    <script type="text/javascript" src="js/vfs_fonts.js"></script>
+    <script type="text/javascript" src="js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="js/buttons.print.min.js"></script>
+    <!-- <script type="text/javascript" src="js/app.js"></script> -->
+    <script>
+      {
+        // Your API KEY
+        const API_KEY = "AIzaSyAs2jLZF59Jav7sUrPtQlybPIrWoRx9WoY";
+        function displayResult2(response) {
+          var headers = response.result.values[0];
+          var rows = response.result.values.slice(1);
+          // Adjust rows to match the headers length by filling missing cells with empty strings
+          rows = rows.map(function (row) {
+            while (row.length < headers.length) {
+              row.push("");
+            }
+            return row;
+          });
+
+          // ;
+          var table = $("#maintable").DataTable({
+            mark: true,
+            dom: "Bfrtip",
+            lengthMenu: [
+              [10, 25, 50, 100, -1],
+              ["10 rows", "25 rows", "50 rows", "100 rows", "Show All"],
+            ],
+            buttons: [
+              "pageLength",
+              {
+                extend: "copyHtml5",
+                exportOptions: {
+                  columns: ":visible",
+                },
+              },
+              {
+                extend: "excelHtml5",
+                exportOptions: {
+                  columns: ":visible",
+                },
+              },
+              {
+                extend: "csvHtml5",
+                exportOptions: {
+                  columns: ":visible",
+                },
+              },
+              {
+                extend: "print",
+                exportOptions: {
+                  columns: ":visible",
+                },
+              },
+              // {
+              //   extend: "pdfHtml5",
+              //   download: "open",
+              //   exportOptions: {
+              //     columns: ":visible",
+              //   },
+              // },
+              "colvis",
+            ],
+            columns: [
+              { title: "Time Stamp" },
+              { title: "Name" },
+              { title: "Email" },
+              { title: "Contact" },
+              { title: "Video Name" },
+              { title: "College Name" },
+              { title: "Location" },
+            ],
+            columDefs: [
+              {
+                targets: -1,
+                visible: false,
+              },
+            ],
+            data: rows,
+          });
+
+          // 4) Search on Multiple Columns
+          $("#maintable tfoot th").each(function () {
+            var title = $("#maintable tfoot th").eq($(this).index()).text();
+            $(this).html(
+              '<input type="text" placeholder="Search ' + title + '" />'
+            );
+          });
+
+          table
+            .columns()
+            .eq(0)
+            .each(function (colIdx) {
+              $("input", table.column(colIdx).footer()).on(
+                "keyup change",
+                function () {
+                  table.column(colIdx).search(this.value).draw();
+                }
+              );
+            });
+          // } catch (e) {
+          //   console.error("Error initializing DataTable:", e);
+          //   // Handle or log the error as needed
+          // }
+        }
+        function loadData() {
+          // Spreadsheet ID
+          const spreadsheetId = "1cQN-WxArQ6gxy4kLXyfe3bZ7sA0CVgocyplD-tqcD1g";
+          const range = "A:Z";
+          getPublicValues({ spreadsheetId, range }, displayResult2);
+        }
+
+        window.addEventListener("load", (e) => {
+          initOAuthClient({ apiKey: API_KEY });
+        });
+
+        document.addEventListener("gapi-loaded", (e) => {
+          loadData();
+        });
+      }
+    </script>
+    <script type="text/javascript" src="js/jquery.mark.min.js"></script>
+    <script type="text/javascript" src="js/datatables.mark.js"></script>
+    <script type="text/javascript" src="js/buttons.colVis.min.js"></script>
+    <footer></footer>
+  </body>
+</html>
