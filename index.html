@@ -25,6 +25,22 @@
     <!-- easyData -->
     <script type="text/javascript" src="js/easyData-google-sheets.js"></script>
     <title>Mirchi Event Dashboard</title>
+    <style>
+      /* Animation for rotation */
+      @keyframes rotate {
+        from {
+          transform: rotate(360deg);
+        }
+        to {
+          transform: rotate(0deg);
+        }
+      }
+
+      /* Class to apply rotation animation */
+      .rotating {
+        animation: rotate 0.8s linear;
+      }
+    </style>
   </head>
 
   <body class="container" style="background-color: #fde2d3">
@@ -59,6 +75,20 @@
     </div>
     <hr />
     <div class="mb-5">
+      <button
+        id="refreshButton"
+        class="mb-2"
+        style="border-radius: 5px; padding: 2px; cursor: pointer"
+      >
+        <img
+          id="refreshImage"
+          width="30"
+          height="30"
+          src="img/restart.png"
+          alt=""
+          srcset=""
+        />
+      </button>
       <table
         id="maintable"
         class="display compact cell-border"
@@ -79,6 +109,20 @@
       {
         // Your API KEY
         const API_KEY = "AIzaSyAs2jLZF59Jav7sUrPtQlybPIrWoRx9WoY";
+        // JavaScript to handle button click and apply animation
+        document
+          .getElementById("refreshButton")
+          .addEventListener("click", function () {
+            var image = document.getElementById("refreshImage");
+
+            // Add the rotating class to start the animation
+            image.classList.add("rotating");
+            // Remove the rotating class after the animation ends (1 second in this case)
+            setTimeout(function () {
+              image.classList.remove("rotating");
+              location.reload();
+            }, 1000); // Match this timeout with the duration of the animation
+          });
         function displayResult2(response) {
           var headers = response.result.values[0];
           var rows = response.result.values.slice(1);
